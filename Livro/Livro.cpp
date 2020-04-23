@@ -19,6 +19,12 @@ int main()
 	ptr_xi = &xi;
 	imprimir();
 
+	xi = 20;
+	imprimir();
+
+	*ptr_xi = 30;
+	imprimir();
+
 	return 0;
 }
 
