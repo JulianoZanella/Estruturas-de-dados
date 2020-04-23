@@ -7,28 +7,35 @@
 #include <locale.h>
 #include <math.h>
 
-struct semaforo {
-	char cor[50];
-	int id;
-};
-semaforo a = { "vermelha", 1 };
-semaforo b = { "amarela", 2 };
-semaforo c = { "verde", 3 };
-semaforo* ptr;
-
-
-
 int main()
 {
 	setlocale(LC_ALL, "Portuguese");
 
-	ptr = &a;
+	int tamanho;
+	int* vetor_base_2;
+	int* vetor_base_3;
 
-	printf("Semáforo: %d, cor: %s\n", (*ptr).id, (*ptr).cor);
-	ptr++;
-	printf("Semáforo: %d, cor: %s\n", (*ptr).id, (*ptr).cor);
-	ptr++;
-	printf("Semáforo: %d, cor: %s\n", (*ptr).id, (*ptr).cor);
+	printf("Qual o tamanho do 1º vetor: ");
+	scanf("%d", &tamanho);
+
+	vetor_base_2 = (int*)malloc(sizeof(int) * tamanho);
+	vetor_base_3 = (int*)malloc(sizeof(int) * tamanho * 2);
+
+	printf("Vetor base 2: [");
+	for (int i = 0; i < tamanho; i++)
+	{
+		vetor_base_2[i] = pow(2, i);
+		printf("%d\t", vetor_base_2[i]);
+	}
+	printf("]\n");
+
+	printf("Vetor base 3: [");
+	for (int i = 0; i < tamanho * 2; i++)
+	{
+		vetor_base_3[i] = pow(3, i);
+		printf("%d\t", vetor_base_3[i]);
+	}
+	printf("]\n");
 
 	system("Pause");
 	return 0;
