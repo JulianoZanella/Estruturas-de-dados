@@ -9,36 +9,36 @@
 
 #define tamanho 5
 
-struct tpilha {
+struct tfila {
 	int dados[tamanho];
 	int inicio;
 	int fim;
 };
 
-struct tpilha pilha;
+struct tfila fila;
 int opcao;
 
-void pilha_push();
-void pilha_pop();
-void pilha_show();
+void fila_entrar();
+void fila_sair();
+void fila_mostrar();
 void show_menu();
 
-int main(int argc, char** argv) {
+int main() {
 	setlocale(LC_ALL, "Portuguese");
 	opcao = 1;
-	pilha.inicio = 0;
-	pilha.fim = 0;
+	fila.inicio = 0;
+	fila.fim = 0;
 	while (opcao != 0) {
 		system("cls");
-		pilha_show();
+		fila_mostrar();
 		show_menu();
 		scanf("%d", &opcao);
 		switch (opcao) {
 		case 1:
-			pilha_push();
+			fila_entrar();
 			break;
 		case 2:
-			pilha_pop();
+			fila_sair();
 			break;
 		}
 	}
@@ -46,40 +46,44 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void pilha_push() {
-	if (pilha.fim == tamanho) {
-		printf("\nA pilha está cheia!\n");
+void fila_entrar() {
+	if (fila.fim == tamanho) {
+		printf("\nA fila está cheia!\n");
 		system("pause");
 	}
 	else {
-		printf("\nDigite o valor a ser empilhado: ");
-		scanf("%d", &pilha.dados[pilha.fim]);
-		pilha.fim++;
+		printf("\nDigite o valor a ser inserido: ");
+		scanf("%d", &fila.dados[fila.fim]);
+		fila.fim++;
 	}
 }
 
-void pilha_pop() {
-	if (pilha.inicio == pilha.fim) {
-		printf("\nA pilha está vazia!\n");
+void fila_sair() {
+	if (fila.inicio == fila.fim) {
+		printf("\nA fila está vazia!\n");
 		system("pause");
 	}
 	else {
-		pilha.dados[pilha.fim - 1] = 0;
-		pilha.fim--;
+		for (int i = 0; i < tamanho; i++)
+		{
+			fila.dados[i] = fila.dados[i + 1];//Por incrivel que pareca nao da erro acessando a posicao 5.
+		}
+		fila.dados[fila.fim] = 0;
+		fila.fim--;
 	}
 }
 
-void pilha_show() {
+void fila_mostrar() {
 	printf("[ ");
 	for (int i = 0; i < tamanho; i++) {
-		printf("%d\t", pilha.dados[i]);
+		printf("%d\t", fila.dados[i]);
 	}
 	printf("]\n\n");
 }
 
 void show_menu() {
 	printf("\nEscolha uma opção:\n");
-	printf("1 - Empilhar\n");
-	printf("2 - Desempilhar\n");
+	printf("1 - Incluir na Fila\n");
+	printf("2 - Excluir da Fila\n");
 	printf("0 - Sair\n\n");
 }
