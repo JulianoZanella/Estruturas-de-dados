@@ -5,40 +5,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
-#include <math.h>
 
-#define tamanho 5
+#define tamanho 7
 
-struct tfila {
-	int dados[tamanho];
+struct tlivro {
+	int codigo;
+	char nome_do_livro[70];
+	char autor[50];
+};
+
+struct tpilha_de_livros {
+	tlivro livros[tamanho];
 	int inicio;
 	int fim;
 };
 
-struct tfila fila;
+struct tpilha_de_livros pilha;
 int opcao;
 
-void fila_entrar();
-void fila_sair();
-void fila_mostrar();
-void show_menu();
+void empilhar();
+void guardar();
+void mostrar_livros();
+void menu();
 
 int main() {
 	setlocale(LC_ALL, "Portuguese");
 	opcao = 1;
-	fila.inicio = 0;
-	fila.fim = 0;
+	pilha.inicio = 0;
+	pilha.fim = 0;
 	while (opcao != 0) {
 		system("cls");
-		fila_mostrar();
-		show_menu();
+		menu();
 		scanf("%d", &opcao);
 		switch (opcao) {
 		case 1:
-			fila_entrar();
+			empilhar();
 			break;
 		case 2:
-			fila_sair();
+			guardar();
+			break;
+		case 3:
+			mostrar_livros();
 			break;
 		}
 	}
@@ -46,44 +53,62 @@ int main() {
 	return 0;
 }
 
-void fila_entrar() {
-	if (fila.fim == tamanho) {
-		printf("\nA fila está cheia!\n");
+void empilhar() {
+	if (pilha.fim == tamanho) {
+		printf("\nA mesa está cheia! Vai quebrar!\n");
 		system("pause");
 	}
 	else {
-		printf("\nDigite o valor a ser inserido: ");
-		scanf("%d", &fila.dados[fila.fim]);
-		fila.fim++;
+		tlivro livro;
+		printf("\nDigite o código do livro: ");
+		scanf("%d", &livro.codigo);
+		printf("\nDigite o nome do livro: ");
+		scanf("%s", livro.nome_do_livro);
+		printf("\nDigite o autor do livro: ");
+		scanf("%s", livro.autor);
+		pilha.livros[pilha.fim] = livro;
+		pilha.fim++;
 	}
 }
 
-void fila_sair() {
-	if (fila.inicio == fila.fim) {
-		printf("\nA fila está vazia!\n");
+void guardar() {
+	if (pilha.inicio == pilha.fim) {
+		printf("\nA mesa está vazia! Nenhum livro para guardar.\n");
 		system("pause");
 	}
 	else {
-		for (int i = 0; i < tamanho; i++)
-		{
-			fila.dados[i] = fila.dados[i + 1];//Por incrivel que pareca nao da erro acessando a posicao 5.
+		tlivro livroNulo = pilha.livros[pilha.fim];
+		livroNulo.codigo = 0;
+		pilha.livros[pilha.fim - 1] = livroNulo;
+		pilha.fim--;
+		printf("\nLivro guardado!\n");
+		system("pause");
+	}
+}
+
+void mostrar_livros() {
+	if (pilha.fim == 0) {
+		printf("Não há livros na mesa.");
+	}
+	else {
+		printf("\nLivros\n\n");
+		printf("Código\tNome\t\tAutor\n");
+		for (int i = 0; i < tamanho; i++) {
+			tlivro livro = pilha.livros[i];
+			if (livro.codigo > 0) {
+				printf("%d\t%s\t\t%s\n", livro.codigo, livro.nome_do_livro, livro.autor);
+			}
 		}
-		fila.dados[fila.fim] = 0;
-		fila.fim--;
 	}
+	
+	printf("\n\n");
+	system("pause");
 }
 
-void fila_mostrar() {
-	printf("[ ");
-	for (int i = 0; i < tamanho; i++) {
-		printf("%d\t", fila.dados[i]);
-	}
-	printf("]\n\n");
-}
-
-void show_menu() {
+void menu() {
 	printf("\nEscolha uma opção:\n");
-	printf("1 - Incluir na Fila\n");
-	printf("2 - Excluir da Fila\n");
+	printf("1 - Empilhar livro\n");
+	printf("2 - Guardar Livro\n");
+	printf("3 - Exibir dados dos Livros à guardar\n");
 	printf("0 - Sair\n\n");
 }
