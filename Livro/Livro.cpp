@@ -6,32 +6,15 @@
 #include <stdlib.h>
 #include <locale.h>
 
-int xi;
-int* ptr_xi;
-
-void imprimir();
-
 int main()
 {
 	setlocale(LC_ALL, "Portuguese");
 
-	xi = 10;
-	ptr_xi = &xi;
-	imprimir();
-
-	xi = 20;
-	imprimir();
-
-	*ptr_xi = 30;
-	imprimir();
+	int* ptr;
+	ptr = (int*)malloc(sizeof(int));
+	printf("Endereço: %p\nValor: %d\n\n", ptr, *ptr);
+	*ptr = 10;
+	printf("Endereço: %p\nValor: %d\n\n", ptr, *ptr);
 
 	return 0;
-}
-
-void imprimir() {
-	printf("Valor de xi = %d \n", xi);
-	printf("Valor de &xi = %p \n", &xi);
-	printf("Valor de ptr_xi = %p \n", ptr_xi);
-	printf("Valor de *ptr_xi = %d \n", *ptr_xi);
-	system("Pause");
 }
