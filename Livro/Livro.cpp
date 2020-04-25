@@ -5,47 +5,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
+#include <time.h>
+#include <string.h>
 
 #define tamanho 7
 
-struct tlivro {
-	int codigo;
-	char nome_do_livro[70];
-	char autor[50];
+
+struct tcliente {
+	char nome[100];
+	time_t horario;
 };
 
-struct tpilha_de_livros {
-	tlivro livros[tamanho];
+struct tfila {
+	tcliente clientes[tamanho];
 	int inicio;
 	int fim;
 };
 
-struct tpilha_de_livros pilha;
+struct tfila fila;
 int opcao;
 
-void empilhar();
-void guardar();
-void mostrar_livros();
+void entrar_na_fila();
+void sair_da_fila();
+void mostrar_clientes();
 void menu();
 
 int main() {
 	setlocale(LC_ALL, "Portuguese");
 	opcao = 1;
-	pilha.inicio = 0;
-	pilha.fim = 0;
+	fila.inicio = 0;
+	fila.fim = 0;
 	while (opcao != 0) {
 		system("cls");
 		menu();
 		scanf("%d", &opcao);
 		switch (opcao) {
 		case 1:
-			empilhar();
+			entrar_na_fila();
 			break;
 		case 2:
-			guardar();
+			sair_da_fila();
 			break;
 		case 3:
-			mostrar_livros();
+			mostrar_clientes();
 			break;
 		}
 	}
@@ -53,51 +55,52 @@ int main() {
 	return 0;
 }
 
-void empilhar() {
-	if (pilha.fim == tamanho) {
-		printf("\nA mesa está cheia! Vai quebrar!\n");
+void entrar_na_fila() {
+	if (fila.fim == tamanho) {
+		printf("\nNão há espaço disponível para atendimento!\n");
 		system("pause");
 	}
 	else {
-		tlivro livro;
-		printf("\nDigite o código do livro: ");
-		scanf("%d", &livro.codigo);
-		printf("\nDigite o nome do livro: ");
-		scanf("%s", livro.nome_do_livro);
-		printf("\nDigite o autor do livro: ");
-		scanf("%s", livro.autor);
-		pilha.livros[pilha.fim] = livro;
-		pilha.fim++;
+		tcliente cliente;
+		printf("\nDigite o nome do cliente: ");
+		scanf("%s", cliente.nome);
+		cliente.horario = time(NULL);
+		
+		fila.clientes[fila.fim] = cliente;
+		fila.fim++;
 	}
 }
 
-void guardar() {
-	if (pilha.inicio == pilha.fim) {
+void sair_da_fila() {
+	if (fila.inicio == fila.fim) {
 		printf("\nA mesa está vazia! Nenhum livro para guardar.\n");
 		system("pause");
 	}
 	else {
-		tlivro livroNulo = pilha.livros[pilha.fim];
-		livroNulo.codigo = 0;
-		pilha.livros[pilha.fim - 1] = livroNulo;
-		pilha.fim--;
-		printf("\nLivro guardado!\n");
+		tcliente clienteNulo = { "", time(NULL) };
+		fila.clientes[fila.inicio] = clienteNulo;
+		for (int i = 0; i < tamanho; i++)
+		{
+			fila.clientes[i] = fila.clientes[i + 1];
+		}
+		fila.fim--;
+		printf("\nCliente chamado!\n");
 		system("pause");
 	}
 }
 
-void mostrar_livros() {
-	if (pilha.fim == 0) {
-		printf("Não há livros na mesa.");
+void mostrar_clientes() {
+	if (fila.fim == 0) {
+		printf("Não há mais clientes.");
 	}
 	else {
-		printf("\nLivros\n\n");
-		printf("Código\tNome\t\tAutor\n");
+		printf("\nClientes\n\n");
+		printf("Horário\t\t\t\tNome\n");
 		for (int i = 0; i < tamanho; i++) {
-			tlivro livro = pilha.livros[i];
-			if (livro.codigo > 0) {
-				printf("%d\t%s\t\t%s\n", livro.codigo, livro.nome_do_livro, livro.autor);
-			}
+			tcliente cliente = fila.clientes[i];
+			if (strlen(cliente.nome) > 0) {
+				printf("%s\t\t\t\t%s\n", ctime(&cliente.horario), cliente.nome);
+			}				
 		}
 	}
 	
@@ -107,8 +110,8 @@ void mostrar_livros() {
 
 void menu() {
 	printf("\nEscolha uma opção:\n");
-	printf("1 - Empilhar livro\n");
-	printf("2 - Guardar Livro\n");
-	printf("3 - Exibir dados dos Livros à guardar\n");
+	printf("1 - Entrar na fila\n");
+	printf("2 - Chamar cliente\n");
+	printf("3 - Exibir clientes esperando\n");
 	printf("0 - Sair\n\n");
 }
