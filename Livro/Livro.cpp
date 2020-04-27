@@ -6,112 +6,91 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <time.h>
-#include <string.h>
 
-#define tamanho 7
-
-
-struct tcliente {
-	char nome[100];
-	time_t horario;
+struct noh {
+	int dado;
+	noh* proximo;
 };
 
-struct tfila {
-	tcliente clientes[tamanho];
-	int inicio;
-	int fim;
-};
+typedef noh* ptr_noh;
+ptr_noh lista;
+int op;
 
-struct tfila fila;
-int opcao;
+void menu_mostrar();
+void menu_selecionar(int op);
+void lista_mostrar(ptr_noh lista);
+void lista_inserir(ptr_noh lista);
+void lista_remover(ptr_noh lista);
 
-void entrar_na_fila();
-void sair_da_fila();
-void mostrar_clientes();
-void menu();
 
 int main() {
 	setlocale(LC_ALL, "Portuguese");
-	opcao = 1;
-	fila.inicio = 0;
-	fila.fim = 0;
-	while (opcao != 0) {
+	srand(time(NULL));
+	op = 1;
+	lista = (ptr_noh)malloc(sizeof(noh));
+	lista->dado = 0;
+	lista->proximo = NULL;
+	while (op != 0) {
 		system("cls");
-		menu();
-		scanf("%d", &opcao);
-		switch (opcao) {
-		case 1:
-			entrar_na_fila();
-			break;
-		case 2:
-			sair_da_fila();
-			break;
-		case 3:
-			mostrar_clientes();
-			break;
-		}
+		menu_mostrar();
+		scanf("%d", &op);
+		menu_selecionar(op);
 	}
-
+	free(lista);
+	system("pause");
 	return 0;
 }
 
-void entrar_na_fila() {
-	if (fila.fim == tamanho) {
-		printf("\nNão há espaço disponível para atendimento!\n");
-		system("pause");
-	}
-	else {
-		tcliente cliente;
-		printf("\nDigite o nome do cliente: ");
-		scanf("%s", cliente.nome);
-		cliente.horario = time(NULL);
-		
-		fila.clientes[fila.fim] = cliente;
-		fila.fim++;
-	}
-}
-
-void sair_da_fila() {
-	if (fila.inicio == fila.fim) {
-		printf("\nA mesa está vazia! Nenhum livro para guardar.\n");
-		system("pause");
-	}
-	else {
-		tcliente clienteNulo = { "", time(NULL) };
-		fila.clientes[fila.inicio] = clienteNulo;
-		for (int i = 0; i < tamanho; i++)
-		{
-			fila.clientes[i] = fila.clientes[i + 1];
-		}
-		fila.fim--;
-		printf("\nCliente chamado!\n");
-		system("pause");
-	}
-}
-
-void mostrar_clientes() {
-	if (fila.fim == 0) {
-		printf("Não há mais clientes.");
-	}
-	else {
-		printf("\nClientes\n\n");
-		printf("Horário\t\t\t\tNome\n");
-		for (int i = 0; i < tamanho; i++) {
-			tcliente cliente = fila.clientes[i];
-			if (strlen(cliente.nome) > 0) {
-				printf("%s\t\t\t\t%s\n", ctime(&cliente.horario), cliente.nome);
-			}				
-		}
-	}
-	
-	printf("\n\n");
-	system("pause");
-}
-
-void menu() {
-	printf("\nEscolha uma opção:\n");
-	printf("1 - Entrar na fila\n");
-	printf("2 - Chamar cliente\n");
-	printf("3 - Exibir clientes esperando\n");
+void menu_mostrar() {
+	lista_mostrar(lista);
+	printf("\n\nEscolha uma opção:\n");
+	printf("1 - Inserir no final da Lista\n");
+	printf("2 - Remover da Lista\n");
 	printf("0 - Sair\n\n");
+}
+
+void menu_selecionar(int op){
+	switch (op){
+	case 1:
+		lista_inserir(lista);
+		break;
+	case 2:
+		lista_remover(lista);
+		break;
+	default:
+		break;
+	}
+}
+
+void lista_mostrar(ptr_noh lista) {
+	system("cls");
+	while (lista->proximo != NULL) {
+		printf("%d\t", lista->dado);
+		lista = lista->proximo;
+	}
+	printf("%d", lista->dado);
+}
+
+void lista_inserir(ptr_noh lista) {
+	while (lista->proximo != NULL) {
+		lista = lista->proximo;
+	}
+	lista->proximo = (ptr_noh)malloc(sizeof(noh));
+	lista = lista->proximo;
+	lista->dado = rand() % 100;
+	lista->proximo = NULL;
+}
+
+void lista_remover(ptr_noh lista) {
+	int dado;
+	ptr_noh atual = (ptr_noh)malloc(sizeof(noh));
+	printf("\n\nEscolha qual valor remover:");
+	scanf("%d", &dado);
+	while (lista->dado != dado) {
+		atual = lista;
+		lista = lista->proximo;
+	}
+	if (lista->dado == dado) {
+		atual->proximo = lista->proximo;
+	}
 }
