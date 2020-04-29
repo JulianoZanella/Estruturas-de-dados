@@ -20,7 +20,7 @@ void menu_mostrar();
 void menu_selecionar(int op);
 void lista_mostrar(ptr_noh lista);
 void lista_inserir(ptr_noh lista);
-void lista_remover(ptr_noh lista);
+void lista_remover();
 
 
 int main() {
@@ -49,13 +49,13 @@ void menu_mostrar() {
 	printf("0 - Sair\n\n");
 }
 
-void menu_selecionar(int op){
-	switch (op){
+void menu_selecionar(int op) {
+	switch (op) {
 	case 1:
 		lista_inserir(lista);
 		break;
 	case 2:
-		lista_remover(lista);
+		lista_remover();
 		break;
 	default:
 		break;
@@ -81,11 +81,15 @@ void lista_inserir(ptr_noh lista) {
 	lista->proximo = NULL;
 }
 
-void lista_remover(ptr_noh lista) {
-	ptr_noh atual = (ptr_noh)malloc(sizeof(noh));
-	while (lista->proximo != NULL) {
-		atual = lista;
+void lista_remover() {//Comentários são o código do livro, que não funciona como deveria
+	//ptr_noh atual = (ptr_noh)malloc(sizeof(noh));
+	//atual = lista;
+	if (lista->proximo != NULL) {
 		lista = lista->proximo;
+		//lista = lista->proximo;
+		//atual->proximo = lista->proximo;
 	}
-	atual->proximo = NULL;
+	else {
+		lista->dado = 0;
+	}
 }
