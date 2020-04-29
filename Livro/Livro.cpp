@@ -82,15 +82,10 @@ void lista_inserir(ptr_noh lista) {
 }
 
 void lista_remover(ptr_noh lista) {
-	int dado;
 	ptr_noh atual = (ptr_noh)malloc(sizeof(noh));
-	printf("\n\nEscolha qual valor remover:");
-	scanf("%d", &dado);
-	while (lista->dado != dado) {
+	while (lista->proximo != NULL) {
 		atual = lista;
 		lista = lista->proximo;
 	}
-	if (lista->dado == dado) {
-		atual->proximo = lista->proximo;
-	}
+	atual->proximo = NULL;
 }
