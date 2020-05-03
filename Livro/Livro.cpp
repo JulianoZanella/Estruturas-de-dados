@@ -5,91 +5,111 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
-#include <time.h>
 
-struct noh {
-	int dado;
-	noh* proximo;
-};
+#define maximo 10
 
-typedef noh* ptr_noh;
-ptr_noh lista;
-int op;
+int tamanho = 0;
+int grafo[maximo];
+int ma[maximo][maximo];
+int opcao = 5;
 
+int informar_valor(const char* frase, int min, int max);
+void grafo_desenhar();
+void grafo_desenhar_matriz();
 void menu_mostrar();
-void menu_selecionar(int op);
-void lista_mostrar(ptr_noh lista);
-void lista_inserir(ptr_noh lista);
-void lista_remover();
-
+void grafo_inserir();
+void grafo_remover();
 
 int main() {
 	setlocale(LC_ALL, "Portuguese");
-	srand(time(NULL));
-	op = 1;
-	lista = (ptr_noh)malloc(sizeof(noh));
-	lista->dado = 0;
-	lista->proximo = NULL;
-	while (op != 0) {
-		system("cls");
-		menu_mostrar();
-		scanf("%d", &op);
-		menu_selecionar(op);
+	tamanho = informar_valor("Escolha a quantidade de vértices do grafo, entre %d e %d: ", 1, maximo);
+	for (int i = 0; i < tamanho; i++)
+	{
+		grafo[i] = i + 1;
 	}
-	free(lista);
+	do
+	{
+		system("cls");
+		grafo_desenhar();
+		grafo_desenhar_matriz();
+		menu_mostrar();
+		scanf("%d", &opcao);
+		switch (opcao) {
+		case 1:
+			grafo_inserir();
+			break;
+		case 2:
+			grafo_remover();
+			break;
+		case 0:
+			break;
+		default:
+			printf("Opção inválida!\n");
+			system("pause");
+				break;
+		}
+
+	} while (opcao != 0);
 	system("pause");
 	return 0;
 }
 
+int informar_valor(const char* frase, int min, int max) {
+	int valor = -1;
+	do
+	{
+		printf(frase, min, max);
+		scanf("%d", &valor);
+
+	} while (valor < min || valor > max);
+	return valor;
+}
+
+void grafo_desenhar() {
+	printf("Grafo: ");
+	for (int i = 0; i < tamanho; i++)
+	{
+		printf("%d\t", grafo[i]);
+	}
+	printf("\n");
+}
+
+void grafo_desenhar_matriz() {
+	printf("Matriz de vértices:\n");
+	for (int i = 0; i < tamanho; i++)
+	{
+		printf("%d", i + 1);
+		for (int j = 0; j < tamanho; j++)
+		{
+			printf("\t%d", ma[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
 void menu_mostrar() {
-	lista_mostrar(lista);
 	printf("\n\nEscolha uma opção:\n");
-	printf("1 - Inserir no final da Lista\n");
-	printf("2 - Remover da Lista\n");
+	printf("1 - Inserir aresta\n");
+	printf("2 - Remover aresta\n");
 	printf("0 - Sair\n\n");
 }
 
-void menu_selecionar(int op) {
-	switch (op) {
-	case 1:
-		lista_inserir(lista);
-		break;
-	case 2:
-		lista_remover();
-		break;
-	default:
-		break;
-	}
+void grafo_inserir() {
+	int num1 = informar_valor("Escolha o vértice de origem, entre %d e %d: ", 1, tamanho);
+	int num2 = informar_valor("Escolha o vértice de destino, entre %d e %d: ", 1, tamanho);
+	num1--;
+	num2--;
+	ma[num1][num2] = 1;
+	ma[num2][num1] = 1;
 }
 
-void lista_mostrar(ptr_noh lista) {
-	system("cls");
-	while (lista->proximo != NULL) {
-		printf("%d\t", lista->dado);
-		lista = lista->proximo;
-	}
-	printf("%d", lista->dado);
+void grafo_remover() {
+	int num1 = informar_valor("Escolha o vértice de origem, entre %d e %d: ", 1, tamanho);
+	int num2 = informar_valor("Escolha o vértice de destino, entre %d e %d: ", 1, tamanho);
+	num1--;
+	num2--;
+	ma[num1][num2] = 0;
+	ma[num2][num1] = 0;
 }
 
-void lista_inserir(ptr_noh lista) {
-	while (lista->proximo != NULL) {
-		lista = lista->proximo;
-	}
-	lista->proximo = (ptr_noh)malloc(sizeof(noh));
-	lista = lista->proximo;
-	lista->dado = rand() % 100;
-	lista->proximo = NULL;
-}
-
-void lista_remover() {//Comentários são o código do livro, que não funciona como deveria
-	//ptr_noh atual = (ptr_noh)malloc(sizeof(noh));
-	//atual = lista;
-	if (lista->proximo != NULL) {
-		lista = lista->proximo;
-		//lista = lista->proximo;
-		//atual->proximo = lista->proximo;
-	}
-	else {
-		lista->dado = 0;
-	}
-}
