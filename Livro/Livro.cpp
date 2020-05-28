@@ -21,12 +21,12 @@ int custo = 0;
 int* custos = NULL;
 
 //Prototipação
-void buscaEmLargura(struct str_no g[], int inicio, int alvo);
+void dijkstra(int vertices, int origem, int destino, int* custos);
 void menu_mostrar(void);
-void criar_grafo();
-void adiciona_aresta_ao_grafo(str_no* grafo, int origem, int destino);
-void desenhar_grafo();
-void buscar();
+void grafo_procurar(void);
+void grafo_criar();
+void adiciona_aresta_ao_grafo(int origem, int destino);
+void desenhar_grafo(int vertices);
 
 int main(int argc, char** argv) {
 	int opt = -1;
@@ -37,39 +37,57 @@ int main(int argc, char** argv) {
 		scanf("%d", &opt);
 		switch (opt) {
 		case 1:
-			criar_grafo();
+			grafo_criar();
 			break;
 		case 2:
-			desenhar_grafo();
-			system("pause");
-			break;
-		case 3:
-			buscar();
+			//procura os caminhos         
+			if (vertices > 0) {
+				grafo_procurar();
+			}
 			break;
 		}
 	} while (opt != 0);
+	printf("\nAlgoritmo de Dijkstra finalizado...\n\n");
+	system("pause");
 
 	return 0;
 }
 
-void criar_grafo() {
-	printf("\nInforme a quantidade de vertices:");
-	scanf("%d", &vertices);
-	//Preenchendo o grafo com os vertices.
-	for (int i = 0; i < vertices; i++)
-	{
-		str_no* novoNo = (str_no*)malloc(sizeof(str_no));
-		novoNo->id = i + 1;
-		novoNo->proximo = NULL;
-		grafo[i] = *novoNo;
-		free(novoNo);
-	}
+//Desenha o menu na tela 
+void menu_mostrar(void) {
+	system("cls");
+	printf("Implementacao do Algoritmo de Dijkstra\n");
+	printf("Opcoes:\n");
+	printf("\t 1 - Adicionar um Grafo\n");
+	printf("\t 2 - Procura Os Menores Caminhos no Grafo\n");
+	printf("\t 0 - Sair do programa\n");
+	printf("? ");
+}
 
+void grafo_criar() {
 	do {
-		desenhar_grafo();
-		printf("Informe as arestas:\n");
+		printf("\nInforme o numero de vertices (no minimo 3 ): ");
+		scanf("%d", &vertices);
+	} while (vertices < 3);
+	if (!custos) {
+		free(custos);
+	}
+	custos = (int*)malloc(sizeof(int) * vertices * vertices);
+	//Se o compilador falhou em alocar espaço na memória   
+	if (custos == NULL) {
+		system("color fc");
+		printf("** Erro: Memoria Insuficiente **");
+		exit(-1);
+	}
+	//Preenchendo a matriz com -1   
+	for (int i = 0; i <= vertices * vertices; i++) {
+		custos[i] = -1;
+	}
+	do {
+		system("cls");
+		printf("Entre com as Arestas:\n");
 		do {
-			printf("Origem (entre 1 e %d ou '0' para sair): ", vertices);
+			printf("Origem (entre 1 e %d ou ‘0’ para sair): ", vertices);
 			scanf("%d", &origem);
 		} while (origem < 0 || origem > vertices);
 		if (origem) {
@@ -77,126 +95,114 @@ void criar_grafo() {
 				printf("Destino (entre 1 e %d, menos %d): ", vertices, origem);
 				scanf("%d", &destino);
 			} while (destino < 1 || destino > vertices || destino == origem);
-			adiciona_aresta_ao_grafo(grafo, origem, destino);
-			adiciona_aresta_ao_grafo(grafo, destino, origem);
+			do {
+				printf("Custo (positivo) do vertice %d para o vertice %d: ", origem, destino);
+				scanf("%d", &custo);
+			} while (custo < 0);
+			custos[(origem - 1) * vertices + destino - 1] = custo;
 		}
 	} while (origem);
-
 }
 
-void adiciona_aresta_ao_grafo(str_no* grafo, int origem, int destino) {
-
-	str_no* lista = &grafo[origem - 1];
-	while (lista->proximo != NULL)
-	{
-		lista = lista->proximo;
-	}
-	str_no* novoNo = (str_no*)malloc(sizeof(str_no));
-	novoNo->id = destino;
-	novoNo->proximo = NULL;
-	lista->proximo = novoNo;
-}
-
-void desenhar_grafo() {
-	if (vertices == 0) {
-		printf("Grafo nao inicializado!");
-		return;
-	}
-	for (int i = 0; i < vertices; i++)
-	{
-		printf("[%d] - ", grafo[i].id);
-		str_no* lista = &grafo[i];
-		while (lista->proximo != NULL) {			
-			lista = lista->proximo;
-			printf("%d-", lista->id);
+//Busca os menores caminhos entre os vértices 
+void grafo_procurar(void) {
+	int i, j;
+	system("cls");
+	system("color 03");
+	printf("Lista dos Menores Caminhos no Grafo Dado: \n");
+	for (i = 1; i <= vertices; i++) {
+		for (j = 1; j <= vertices; j++) {
+			dijkstra(vertices, i, j, custos);
 		}
 		printf("\n");
-	}
+	}   system("pause");
+	system("color 07");
 }
 
-//Desenha o menu na tela 
-void menu_mostrar(void) {
-	system("cls");
-	printf("Algoritmos de Busca\n");
-	printf("Opcoes:\n");
-	printf("\t 1 - Adicionar um Grafo\n");
-	printf("\t 2 - Exibir Grafo\n");
-	printf("\t 3 - Busca em Largura\n");
-	printf("\t 0 - Sair do programa\n");
-	printf("Opcao: ");
-}
-
-void buscar() {
-	if (vertices == 0) {
-		printf("Crie um grafo!");
-		system("pause");
-		return;
+//Implementação do algoritmo de Dijkstra
+void dijkstra(int vertices, int origem, int destino, int* custos) {
+	int i = 0, v = 0, cont = 0;
+	int* ant, * tmp;
+	int* z;  /* vertices para os quais se conhece o caminho minimo */
+	double min;
+	//double dist[vertices]; 	/* vetor com os custos dos caminhos */
+	double* dist = (double*)malloc(sizeof(double) * vertices);//trocado para evitar o erro.
+	/* aloca as linhas da matriz */
+	ant = (int*)calloc(vertices, sizeof(int*));
+	if (ant == NULL || dist == NULL) {
+		system("color fc");
+		printf("** Erro: Memoria Insuficiente **");
+		exit(-1);
 	}
-	int inicio, alvo;
-	system("cls");
-	printf("Informe o inicio do grafo:");
-	scanf("%d", &inicio);
-	printf("Informe o alvo da busca:");
-	scanf("%d", &alvo);
-	buscaEmLargura(grafo, inicio, alvo);
-	system("pause");
-}
-
-void buscaEmLargura(struct str_no g[], int inicio, int alvo) {
-	int fila[MAXV];//fila
-	bool visitado[MAXV]; //nós visitados
-	int indice = 0;//controle da fila
-	bool achou = false; //flag (não visitados)
-	int corrente = inicio;
-	struct str_no* ptr;
-	int i;
-	printf("=-=-=-= Busca em Largura =-=-=-=\n");
-	//Maracando os nós como 'não visitados'.
-	for (i = 0; i < MAXV; i++)
-	{
-		visitado[i] = false;
+	tmp = (int*)calloc(vertices, sizeof(int*));
+	if (tmp == NULL) {
+		system("color fc");
+		printf("** Erro: Memoria Insuficiente **");
+		exit(-1);
 	}
-	//Partindo do primeiro vértice.
-	printf("VISITANDO: %d.\n", corrente);
-	visitado[corrente] = true;
-	fila[indice] = corrente;
-	indice++;
-	while (true)
-	{
-		//Visitar os nós adjacentes ao vértice corrente
-		for (ptr = g[corrente].proximo; ptr != NULL; ptr = ptr->proximo)
-		{
-			//Caso o corrente ainda não tenha sido visitado:
-			corrente = ptr->id;
-			if (!visitado[corrente]) {
-				//Enfileira e marca como visitado.
-				printf("VISITANDO: %d.\n", corrente);
-				if (corrente == alvo) {
-					printf("Alvo encontrado!\n\n\n");
-					return;
-				}
-				visitado[corrente] = true;
-				fila[indice] = corrente;
-				indice++;
-			}
-
-		}
-		//Caso a fila não esteja vazia:
-		if (indice != 0) {
-			//Atualizando vértice corrente.
-			corrente = fila[0];
-			//Desenfileirando o primeiro vértice.
-			for (i = 1; i < indice + 1; i++)
-			{
-				fila[i - 1] = fila[i];
-			}
-			indice--;
+	z = (int*)calloc(vertices, sizeof(int*));
+	if (z == NULL) {
+		system("color fc");
+		printf("** Erro: Memoria Insuiciente **");
+		exit(-1);
+	}
+	for (i = 0; i < vertices; i++) {
+		if (custos[(origem - 1) * vertices + i] != -1) {
+			ant[i] = origem - 1;
+			dist[i] = custos[(origem - 1) * vertices + i];
 		}
 		else {
-			//Não há mais vértices para visitar.
-			printf("Encerrando busca.\n");
-			break;
+			ant[i] = -1;
+			dist[i] = HUGE_VAL;
 		}
+		z[i] = 0;
 	}
-	return;
+	z[origem - 1] = 1;
+	dist[origem - 1] = 0;
+	/* Laco principal */
+	do {
+		/* Encontrando o vertice que deve entrar em z */
+		min = HUGE_VAL;
+		for (i = 0; i < vertices; i++) {
+			if (!z[i]) {
+				if (dist[i] >= 0 && dist[i] < min) {
+					min = dist[i];
+					v = i;
+				}
+			}
+		}
+		/* Calculando as distancias dos novos vizinhos de z */
+		if (min != HUGE_VAL && v != destino - 1) {
+			z[v] = 1;
+			for (i = 0; i < vertices; i++) {
+				if (!z[i]) {
+					if (custos[v * vertices + i] != -1 && dist[v] + custos[v * vertices + i] < dist[i]) {
+						dist[i] = dist[v] + custos[v * vertices + i];
+						ant[i] = v;
+					}
+				}
+			}
+		}
+	} while (v != destino - 1 && min != HUGE_VAL);
+	/* Mostra o Resultado da busca */
+	printf("\tDe %d para %d: \t", origem, destino);
+	if (min == HUGE_VAL) {
+		printf("Nao Existe\n");
+		printf("\tCusto: \t- \n");
+	}
+	else {
+		i = destino;
+		i = ant[i - 1];
+		while (i != -1) {
+			tmp[cont] = i + 1;
+			cont++;       i = ant[i];
+		}
+		for (i = cont; i > 0; i--) {
+			printf("%d -> ", tmp[i - 1]);
+		}
+		printf("%d", destino);
+		printf("\n\tCusto:  %d\n", (int)dist[destino - 1]);
+	}
+	free(dist);
 }
+
