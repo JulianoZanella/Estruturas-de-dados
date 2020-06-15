@@ -25,6 +25,8 @@ void lista_limpar(void);
 void lista_mostrar_ordenado(void);
 void troca(int* a, int* b);
 int bubbleSort(int vec[]);
+int selectionSort(int vec[]);
+int insertionSort(int vec[]);
 
 //Função Principal
 int main(void) {
@@ -45,6 +47,15 @@ int main(void) {
 		case 3:
 			lista_limpar();
 			qtd = bubbleSort(ordenado);
+			break;
+		case 4:
+			lista_limpar();
+			qtd = selectionSort(ordenado);
+			break;
+		case 5:
+			lista_limpar();
+			qtd = insertionSort(ordenado);
+			break;
 		}
 	} while (opt != 0);
 	system("pause");
@@ -65,6 +76,8 @@ void menu_mostrar(void) {
 	printf("1 - Gerar lista aleatoriamente\n");
 	printf("2 - Criar lista manualmente\n");
 	printf("3 - BubbleSort\n");
+	printf("4 - SelectionSort\n");
+	printf("5 - InsertionSort\n");
 	printf("0 - Sair...\n\n");
 }
 
@@ -123,3 +136,34 @@ int bubbleSort(int vec[]) {
 	return(qtd);
 }
 
+//Aplica o modo selectionSort  
+int selectionSort(int vec[]) {
+	int i, j, min, qtd = 0;
+	for (i = 0; i < (tamanho - 1); i++) {
+		min = i;
+		for (j = (i + 1); j < tamanho; j++) {
+			if (vec[j] < vec[min]) {
+				min = j;
+			}
+			qtd++;
+		}
+		if (i != min) {
+			troca(&vec[i], &vec[min]);
+		}
+	}
+	return(qtd);
+}
+
+//Aplicando o insertionSort 
+int insertionSort(int vec[]) {
+	int i, j, qtd = 0;
+	for (i = 1; i < tamanho; i++) {
+		j = i;
+		while ((vec[j] < vec[j - 1]) && (j != 0)) {
+			troca(&vec[j], &vec[j - 1]);
+			j--;
+			qtd++;
+		}
+	}
+	return(qtd);
+}
