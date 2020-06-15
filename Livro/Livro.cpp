@@ -23,6 +23,8 @@ void lista_gerar(void);
 void lista_ler(void);
 void lista_limpar(void);
 void lista_mostrar_ordenado(void);
+void troca(int* a, int* b);
+int bubbleSort(int vec[]);
 
 //Função Principal
 int main(void) {
@@ -40,6 +42,9 @@ int main(void) {
 		case 2:
 			lista_ler();
 			break;
+		case 3:
+			lista_limpar();
+			qtd = bubbleSort(ordenado);
 		}
 	} while (opt != 0);
 	system("pause");
@@ -59,6 +64,7 @@ void lista_mostrar(void) {
 void menu_mostrar(void) {
 	printf("1 - Gerar lista aleatoriamente\n");
 	printf("2 - Criar lista manualmente\n");
+	printf("3 - BubbleSort\n");
 	printf("0 - Sair...\n\n");
 }
 
@@ -94,3 +100,26 @@ void lista_mostrar_ordenado(void) {
 	}
 	printf("] Tempo = %d iteracoes\n\n", qtd);
 }
+
+//Função genérica de troca de valores 
+void troca(int* a, int* b) {
+	int tmp;
+	tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+//Aplica o método do bubbleSort
+int bubbleSort(int vec[]) {
+	int qtd, i, j, tmp;
+	qtd = 0;
+	for (i = 0; i < tamanho - 1; i++) {
+		for (j = i + 1; j < tamanho; j++) {
+			if (vec[i] > vec[j]) {
+				troca(&vec[i], &vec[j]);
+			}       qtd++;
+		}
+	}
+	return(qtd);
+}
+
