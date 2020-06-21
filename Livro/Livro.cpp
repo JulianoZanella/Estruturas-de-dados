@@ -30,6 +30,8 @@ int insertionSort(int vec[]);
 int shellSort(int vec[]);
 int mergeSort(int vec[], int tam, int qtd);
 void junta(int vec[], int tam);
+int quickSort(int vec[], int left, int right, int qtd);
+int particiona(int vec[], int left, int right);
 
 //Função Principal
 int main(void) {
@@ -67,6 +69,10 @@ int main(void) {
 			lista_limpar();
 			qtd = mergeSort(ordenado, tamanho, qtd);
 			break;
+		case 8:
+			lista_limpar();
+			qtd = quickSort(ordenado, 0, tamanho - 1, qtd);
+			break;
 		}
 	} while (opt != 0);
 	system("pause");
@@ -91,6 +97,7 @@ void menu_mostrar(void) {
 	printf("5 - InsertionSort\n");
 	printf("6 - ShellSort\n");
 	printf("7 - MergeSort\n");
+	printf("8 - QuickSort\n");
 	printf("0 - Sair...\n\n");
 }
 
@@ -260,3 +267,26 @@ void junta(int vec[], int tam) {
 	free(tmp);
 }
 
+//Aplica o modo do quickSort 
+int quickSort(int vec[], int left, int right, int qtd) {
+	int r;
+	if (right > left) {
+		r = particiona(vec, left, right);
+		qtd = quickSort(vec, left, r - 1, qtd);
+		qtd = quickSort(vec, r + 1, right, qtd);
+	}
+	return (qtd + 1);
+}
+//Divide o vetor em pedaços menores 
+int particiona(int vec[], int left, int right) {
+	int i, j;
+	i = left;
+	for (j = left + 1; j <= right; ++j) {
+		if (vec[j] < vec[left]) {
+			++i;
+			troca(&vec[i], &vec[j]);
+		}
+	}
+	troca(&vec[left], &vec[i]);
+	return i;
+}
