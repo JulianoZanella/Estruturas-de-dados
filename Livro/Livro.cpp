@@ -28,6 +28,8 @@ int bubbleSort(int vec[]);
 int selectionSort(int vec[]);
 int insertionSort(int vec[]);
 int shellSort(int vec[]);
+int mergeSort(int vec[], int tam, int qtd);
+void junta(int vec[], int tam);
 
 //Função Principal
 int main(void) {
@@ -61,6 +63,10 @@ int main(void) {
 			lista_limpar();
 			qtd = shellSort(ordenado);
 			break;
+		case 7:
+			lista_limpar();
+			qtd = mergeSort(ordenado, tamanho, qtd);
+			break;
 		}
 	} while (opt != 0);
 	system("pause");
@@ -84,6 +90,7 @@ void menu_mostrar(void) {
 	printf("4 - SelectionSort\n");
 	printf("5 - InsertionSort\n");
 	printf("6 - ShellSort\n");
+	printf("7 - MergeSort\n");
 	printf("0 - Sair...\n\n");
 }
 
@@ -196,3 +203,60 @@ int shellSort(int vec[]) {
 	} while (gap > 1);
 	return (qtd);
 }
+
+//Aplica o modo mergeSort
+int mergeSort(int vec[], int tam, int qtd) {
+	int meio;
+	if (tam > 1) {
+		meio = tam / 2;
+		qtd = mergeSort(vec, meio, qtd);
+		qtd = mergeSort(vec + meio, tam - meio, qtd);
+		junta(vec, tam);
+	}
+	return (qtd + 1);
+}
+
+//Junta os pedaços num novo vetor ordenado 
+void junta(int vec[], int tam) {
+	int i, j, k;
+	int meio;
+	int* tmp;
+	tmp = (int*)malloc(tam * sizeof(int));
+	if (tmp == NULL) {
+		exit(1);
+	}
+	meio = tam / 2;
+	i = 0;
+	j = meio;
+	k = 0;
+	while (i < meio && j < tam) {
+		if (vec[i] < vec[j]) {
+			tmp[k] = vec[i];
+			++i;
+		}
+		else {
+			tmp[k] = vec[j];
+			++j;
+		}
+		++k;
+	}
+	if (i == meio) {
+		while (j < tam) {
+			tmp[k] = vec[j];
+			++j;
+			++k;
+		}
+	}
+	else {
+		while (i < meio) {
+			tmp[k] = vec[i];
+			++i;
+			++k;
+		}
+	}
+	for (i = 0; i < tam; ++i) {
+		vec[i] = tmp[i];
+	}
+	free(tmp);
+}
+
