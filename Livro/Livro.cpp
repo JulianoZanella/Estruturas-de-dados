@@ -27,6 +27,7 @@ void troca(int* a, int* b);
 int bubbleSort(int vec[]);
 int selectionSort(int vec[]);
 int insertionSort(int vec[]);
+int shellSort(int vec[]);
 
 //Função Principal
 int main(void) {
@@ -56,6 +57,10 @@ int main(void) {
 			lista_limpar();
 			qtd = insertionSort(ordenado);
 			break;
+		case 6:
+			lista_limpar();
+			qtd = shellSort(ordenado);
+			break;
 		}
 	} while (opt != 0);
 	system("pause");
@@ -78,6 +83,7 @@ void menu_mostrar(void) {
 	printf("3 - BubbleSort\n");
 	printf("4 - SelectionSort\n");
 	printf("5 - InsertionSort\n");
+	printf("6 - ShellSort\n");
 	printf("0 - Sair...\n\n");
 }
 
@@ -166,4 +172,27 @@ int insertionSort(int vec[]) {
 		}
 	}
 	return(qtd);
+}
+
+//Aplica o shellSort 
+int shellSort(int vec[]) {
+	int i, j, valor, qtd = 0;
+	int gap = 1;
+	do {
+		gap = 3 * gap + 1;
+	} while (gap < tamanho);
+	do {
+		gap /= 3;
+		for (i = gap; i < tamanho; i++) {
+			valor = vec[i];
+			j = i - gap;
+			while (j >= 0 && valor < vec[j]) {
+				vec[j + gap] = vec[j];
+				j -= gap;
+				qtd++;
+			}
+			vec[j + gap] = valor;
+		}
+	} while (gap > 1);
+	return (qtd);
 }
