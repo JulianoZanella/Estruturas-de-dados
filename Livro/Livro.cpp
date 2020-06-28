@@ -40,6 +40,7 @@ void exibirResultadoBusca(int posicao);
 int buscaSequencial(int vec[], int arg, int tam);
 int buscaIndexada(int vec[], int arg, int tam);
 void mostrarEsforco(int qtd);
+int buscaBinaria(int vec[], int arg, int tam);
 
 //Função Principal
 int main(void) {
@@ -87,6 +88,7 @@ int main(void) {
 			break;
 		case 10:
 		case 11:
+		case 12:
 			buscarValor(opt);
 			break;
 		}
@@ -121,6 +123,7 @@ void menu_mostrar(void) {
 	printf("-----Busca-----\n");
 	printf("10 - Busca Sequencial\n");
 	printf("11 - Busca Sequencial Indexada\n");
+	printf("12 - Busca Binaria\n");
 
 	printf("\n0 - Sair...\n\n");
 	printf("Opcao: ");
@@ -381,6 +384,8 @@ void buscarValor(int opt) {
 		break;
 	case 11: exibirResultadoBusca(buscaIndexada(vec, valor, tamanho));
 		break;
+	case 12: exibirResultadoBusca(buscaBinaria(vec, valor, tamanho));
+		break;
 	}
 }
 
@@ -427,4 +432,29 @@ int buscaIndexada(int vec[], int arg, int tam) {
 
 void mostrarEsforco(int qtd) {
 	printf("Esforco computacional: %d interacoes", qtd);
+}
+
+//Função de Busca Binária 
+int buscaBinaria(int vec[], int arg, int tam) {
+	lista_limpar();
+	shellSort(vec);
+	int menor, maior, meio, i = 0, achou = -1;
+	menor = 0;
+	maior = tam - 1;
+	while (menor <= maior) {
+		meio = (menor + maior) / 2;
+		if (arg == vec[meio]) {
+			achou = meio;
+			break;
+		}
+		if (arg < vec[meio]) {
+			maior = meio - 1;
+		}
+		else {
+			menor = meio + 1;
+		}
+		i++;
+	}
+	mostrarEsforco(i + 1);
+	return achou;
 }
