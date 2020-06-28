@@ -40,7 +40,8 @@ void exibirResultadoBusca(int posicao);
 int buscaSequencial(int vec[], int arg, int tam);
 int buscaIndexada(int vec[], int arg, int tam);
 void mostrarEsforco(int qtd);
-int buscaBinaria(int vec[], int arg, int tam);
+int buscaBinaria(int vec[], int arg, int tam); 
+int buscaInterpol(int vec[], int arg, int tam);
 
 //Função Principal
 int main(void) {
@@ -89,6 +90,7 @@ int main(void) {
 		case 10:
 		case 11:
 		case 12:
+		case 13:
 			buscarValor(opt);
 			break;
 		}
@@ -124,6 +126,7 @@ void menu_mostrar(void) {
 	printf("10 - Busca Sequencial\n");
 	printf("11 - Busca Sequencial Indexada\n");
 	printf("12 - Busca Binaria\n");
+	printf("13 - Busca por Interpolacao\n");
 
 	printf("\n0 - Sair...\n\n");
 	printf("Opcao: ");
@@ -386,6 +389,8 @@ void buscarValor(int opt) {
 		break;
 	case 12: exibirResultadoBusca(buscaBinaria(vec, valor, tamanho));
 		break;
+	case 13: exibirResultadoBusca(buscaInterpol(vec, valor, tamanho));
+		break;
 	}
 }
 
@@ -458,3 +463,27 @@ int buscaBinaria(int vec[], int arg, int tam) {
 	mostrarEsforco(i + 1);
 	return achou;
 }
+
+//Função de busca por interpolação 
+int buscaInterpol(int vec[], int arg, int tam) {
+	int menor, maior, meio, achou, i = 0;
+	menor = 0;
+	maior = tam - 1;
+	achou = -1;
+	while ((menor <= maior) && (achou == -1)) {
+		meio = menor + (maior - menor) * ((arg - vec[menor]) / (vec[maior] - vec[menor]));
+		if (arg == vec[meio]) {
+			achou = meio;
+		}
+		if (arg < vec[meio]) {
+			maior = meio - 1;
+		}
+		else {
+			menor = meio + 1;
+		}
+		i++;
+	}
+	mostrarEsforco(i + 1);
+	return(achou);
+}
+
