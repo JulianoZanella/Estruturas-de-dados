@@ -39,6 +39,7 @@ void buscarValor(int opt);
 void exibirResultadoBusca(int posicao);
 int buscaSequencial(int vec[], int arg, int tam);
 int buscaIndexada(int vec[], int arg, int tam);
+void mostrarEsforco(int qtd);
 
 //Função Principal
 int main(void) {
@@ -403,6 +404,7 @@ int buscaSequencial(int vec[], int arg, int tam) {
 		}
 		i++;
 	}
+	mostrarEsforco(i + 1);
 	return achou;
 }
 
@@ -410,10 +412,19 @@ int buscaSequencial(int vec[], int arg, int tam) {
 int buscaIndexada(int vec[], int arg, int tam) {
 	lista_limpar();
 	shellSort(vec);
-	int i = 0;
+	int i = 0, achou = -1;
 	for (i = 0; i < tam; i++)
 	{
-		if (vec[i] == arg) return i;
-		if (vec[i] > arg) return -1;
+		if (vec[i] == arg) {
+			achou = i;
+			break;
+		}
+		if (vec[i] > arg) break;
 	}
+	mostrarEsforco(i + 1);
+	return achou;
+}
+
+void mostrarEsforco(int qtd) {
+	printf("Esforco computacional: %d interacoes", qtd);
 }
