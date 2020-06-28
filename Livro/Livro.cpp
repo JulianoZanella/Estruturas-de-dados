@@ -35,6 +35,9 @@ int particiona(int vec[], int left, int right);
 int heapifica(int vec[], int tam, int i);
 int constroiHeap(int vec[], int tam);
 int heapSort(int vec[], int tam);
+void buscarValor(int opt);
+void exibirResultadoBusca(int posicao);
+int buscaSequencial(int vec[], int arg, int tam);
 
 //Função Principal
 int main(void) {
@@ -80,6 +83,9 @@ int main(void) {
 			lista_limpar();
 			qtd = heapSort(ordenado, tamanho);
 			break;
+		case 10:
+			buscarValor(opt);
+			break;
 		}
 	} while (opt != 0);
 	system("pause");
@@ -99,6 +105,8 @@ void lista_mostrar(void) {
 void menu_mostrar(void) {
 	printf("1 - Gerar lista aleatoriamente\n");
 	printf("2 - Criar lista manualmente\n");
+
+	printf("-----Ordenacao-----\n");
 	printf("3 - BubbleSort\n");
 	printf("4 - SelectionSort\n");
 	printf("5 - InsertionSort\n");
@@ -106,7 +114,12 @@ void menu_mostrar(void) {
 	printf("7 - MergeSort\n");
 	printf("8 - QuickSort\n");
 	printf("9 - HeapSort\n");
-	printf("0 - Sair...\n\n");
+
+	printf("-----Busca-----\n");
+	printf("10 - Busca Sequencial\n");
+
+	printf("\n0 - Sair...\n\n");
+	printf("Opcao: ");
 }
 
 //Gera uma lista aleatória
@@ -342,4 +355,48 @@ int heapSort(int vec[], int tam) {
 		qtd += heapifica(vec, n, 0);
 	}
 	return qtd;
+}
+
+void buscarValor(int opt) {
+	printf("\n\nDigite o valor a ser procurado:");
+	int valor, vetor;
+	scanf("%d", &valor);
+	printf("Em qual vetor (Original=0/Ordenado=1)?");
+	scanf("%d", &vetor);
+	int* vec;
+	if (vetor == 0) {
+		vec = lista;
+	}
+	else
+	{
+		vec = ordenado;
+	}
+	switch (opt)
+	{
+	case 10: exibirResultadoBusca(buscaSequencial(vec, valor, tamanho));
+		break;
+	}
+}
+
+void exibirResultadoBusca(int posicao) {
+	if (posicao == -1) {
+		printf("\nValor nao encontrado\n");
+	}
+	else
+	{
+		printf("\nValor encontrado na posicao [%d] do vetor.\n", posicao);
+	}
+	system("pause");
+}
+
+//Função de busca sequencial
+int buscaSequencial(int vec[], int arg, int tam) {
+	int i = 0, achou = -1;
+	while (i < tam && achou == -1) {
+		if (vec[i] == arg) {
+			achou = i;
+		}
+		i++;
+	}
+	return achou;
 }
