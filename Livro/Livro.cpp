@@ -32,6 +32,9 @@ int mergeSort(int vec[], int tam, int qtd);
 void junta(int vec[], int tam);
 int quickSort(int vec[], int left, int right, int qtd);
 int particiona(int vec[], int left, int right);
+int heapifica(int vec[], int tam, int i);
+int constroiHeap(int vec[], int tam);
+int heapSort(int vec[], int tam);
 
 //Função Principal
 int main(void) {
@@ -73,6 +76,10 @@ int main(void) {
 			lista_limpar();
 			qtd = quickSort(ordenado, 0, tamanho - 1, qtd);
 			break;
+		case 9:
+			lista_limpar();
+			qtd = heapSort(ordenado, tamanho);
+			break;
 		}
 	} while (opt != 0);
 	system("pause");
@@ -98,6 +105,7 @@ void menu_mostrar(void) {
 	printf("6 - ShellSort\n");
 	printf("7 - MergeSort\n");
 	printf("8 - QuickSort\n");
+	printf("9 - HeapSort\n");
 	printf("0 - Sair...\n\n");
 }
 
@@ -289,4 +297,49 @@ int particiona(int vec[], int left, int right) {
 	}
 	troca(&vec[left], &vec[i]);
 	return i;
+}
+
+//Garante as propriedades de heap a um nó 
+int heapifica(int vec[], int tam, int i) {
+	int e, d, maior, qtd;
+	qtd = 1;
+	e = 2 * i + 1;
+	d = 2 * i + 2;
+	if (e < tam && vec[e] > vec[i]) {
+		maior = e;
+	}
+	else {
+		maior = i;
+	}
+	if (d < tam && vec[d] > vec[maior]) {
+		maior = d;
+	}
+	if (maior != i) {
+		troca(&vec[i], &vec[maior]);
+		qtd += heapifica(vec, tam, maior);
+	}
+	return qtd;
+}
+
+//Transforma o vetor em uma heap 
+int constroiHeap(int vec[], int tam) {
+	int i, qtd; qtd = 0;
+	for (i = tam / 2; i >= 0; i--) {
+		qtd += heapifica(vec, tam, i);
+	}
+	return qtd;
+}
+
+//Ordena com base na estrutura heap 
+int heapSort(int vec[], int tam) {
+	int n, i, qtd;
+	qtd = 0;
+	qtd += constroiHeap(vec, tam);
+	n = tam;
+	for (i = tam - 1; i > 0; i--) {
+		troca(&vec[0], &vec[i]);
+		n--;
+		qtd += heapifica(vec, n, 0);
+	}
+	return qtd;
 }
