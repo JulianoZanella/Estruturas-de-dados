@@ -9,6 +9,12 @@
 
 //Constantes 
 #define tamanho 10
+#define HASH 10
+
+struct noh {
+	int dado;
+	noh* proximo;
+};
 
 //Variáveis
 int lista[tamanho];
@@ -40,8 +46,12 @@ void exibirResultadoBusca(int posicao);
 int buscaSequencial(int vec[], int arg, int tam);
 int buscaIndexada(int vec[], int arg, int tam);
 void mostrarEsforco(int qtd);
-int buscaBinaria(int vec[], int arg, int tam); 
+int buscaBinaria(int vec[], int arg, int tam);
 int buscaInterpol(int vec[], int arg, int tam);
+int buscaHash(int vec[], int arg, int tam);
+int hash(int valor);
+void inserirNaHash(noh* lista, int valor);
+int buscarNaHash(noh* lista, int valor);
 
 //Função Principal
 int main(void) {
@@ -91,6 +101,7 @@ int main(void) {
 		case 11:
 		case 12:
 		case 13:
+		case 14:
 			buscarValor(opt);
 			break;
 		}
@@ -127,6 +138,7 @@ void menu_mostrar(void) {
 	printf("11 - Busca Sequencial Indexada\n");
 	printf("12 - Busca Binaria\n");
 	printf("13 - Busca por Interpolacao\n");
+	printf("14 - Busca por Tabela de Dispersao/Hash\n");
 
 	printf("\n0 - Sair...\n\n");
 	printf("Opcao: ");
@@ -391,6 +403,8 @@ void buscarValor(int opt) {
 		break;
 	case 13: exibirResultadoBusca(buscaInterpol(vec, valor, tamanho));
 		break;
+	case 14: exibirResultadoBusca(buscaHash(vec, valor, tamanho));
+		break;
 	}
 }
 
@@ -487,3 +501,71 @@ int buscaInterpol(int vec[], int arg, int tam) {
 	return(achou);
 }
 
+//Função de busca por dispersão
+int buscaHash(int vec[], int arg, int tam) {
+	//Primeiro monta a tabela hash
+	int i = 0;
+	noh* vetorHash[HASH];
+	for (i = 0; i < HASH; i++)
+	{
+		noh* lista;
+		lista = (noh*)malloc(sizeof(noh));
+		lista->dado = -1;
+		lista->proximo = NULL;
+		vetorHash[i] = lista;
+	}
+	//Depois insere dinamicamente
+	for (i = 0; i < tam; i++)
+	{
+		int posicao = hash(vec[i]);
+		inserirNaHash(vetorHash[posicao], vec[i]);
+	}
+	//para então buscar
+	int posicao = hash(arg);
+	printf("Valor se encontra na %d posicao na tabela de dispersao/n", posicao);
+	int retorno = buscarNaHash(vetorHash[posicao], arg);
+	//Dispose
+	for (i = 0; i < HASH; i++)
+	{
+		free(vetorHash[i]);
+	}
+	return retorno;
+}
+
+//Função Hash
+int hash(int valor) {
+	return (valor * valor) % HASH;
+}
+
+void inserirNaHash(noh* lista, int valor) {
+	if (lista->dado == -1) {
+		lista->dado = valor;
+	}
+	else {
+
+		while (lista->proximo != NULL) {
+			lista = lista->proximo;
+		}
+		lista->proximo = (noh*)malloc(sizeof(noh));
+		lista = lista->proximo;
+		lista->dado = valor;
+		lista->proximo = NULL;
+	}
+}
+
+int buscarNaHash(noh* lista, int valor) {
+	int achou = -1, i = 0;
+	if (lista->dado != -1) {
+		while (lista->proximo != NULL) {
+			if (lista->dado == valor) {
+				achou = i;
+				break;
+			}
+			lista = lista->proximo;
+			i++;
+		}
+		if (lista->dado == valor) achou = i;
+	}
+	mostrarEsforco(i + 1);
+	return achou;
+}
