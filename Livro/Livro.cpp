@@ -38,6 +38,7 @@ int heapSort(int vec[], int tam);
 void buscarValor(int opt);
 void exibirResultadoBusca(int posicao);
 int buscaSequencial(int vec[], int arg, int tam);
+int buscaIndexada(int vec[], int arg, int tam);
 
 //Função Principal
 int main(void) {
@@ -84,6 +85,7 @@ int main(void) {
 			qtd = heapSort(ordenado, tamanho);
 			break;
 		case 10:
+		case 11:
 			buscarValor(opt);
 			break;
 		}
@@ -117,6 +119,7 @@ void menu_mostrar(void) {
 
 	printf("-----Busca-----\n");
 	printf("10 - Busca Sequencial\n");
+	printf("11 - Busca Sequencial Indexada\n");
 
 	printf("\n0 - Sair...\n\n");
 	printf("Opcao: ");
@@ -375,6 +378,8 @@ void buscarValor(int opt) {
 	{
 	case 10: exibirResultadoBusca(buscaSequencial(vec, valor, tamanho));
 		break;
+	case 11: exibirResultadoBusca(buscaIndexada(vec, valor, tamanho));
+		break;
 	}
 }
 
@@ -399,4 +404,16 @@ int buscaSequencial(int vec[], int arg, int tam) {
 		i++;
 	}
 	return achou;
+}
+
+//Função de Busca Sequencial Indexada por ordem ascendente
+int buscaIndexada(int vec[], int arg, int tam) {
+	lista_limpar();
+	shellSort(vec);
+	int i = 0;
+	for (i = 0; i < tam; i++)
+	{
+		if (vec[i] == arg) return i;
+		if (vec[i] > arg) return -1;
+	}
 }
