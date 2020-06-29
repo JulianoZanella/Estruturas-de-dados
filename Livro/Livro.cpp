@@ -450,7 +450,7 @@ int buscaIndexada(int vec[], int arg, int tam) {
 }
 
 void mostrarEsforco(int qtd) {
-	printf("Esforco computacional: %d interacoes", qtd);
+	printf("Esforco computacional: %d iteracoes", qtd);
 }
 
 //Função de Busca Binária 
